@@ -51,9 +51,6 @@ def ORBMatch(img1,img2):
     img2 = cv2.medianBlur(img2,3)
     _,img1 = cv2.threshold(img1,0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     _,img2 = cv2.threshold(img2,0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    cv2.imshow('binary1',img1)
-    cv2.imshow('binary2',img2)
-    cv2.waitKey()
     #init orb
     orb = cv2.ORB_create()
     #find keypoint
@@ -215,16 +212,18 @@ def ham_dist(x, y):
     assert len(x) == len(y)
     return sum([ch1 != ch2 for ch1, ch2 in zip(x, y)])
 
+from locate import conter
 if __name__ == '__main__':
     # categorys = ['遮盖','划痕','污损']
     categorys = ['cover','scratch','dirty']
     for cat in categorys:
-        root = './qrcode_crop/' + cat + '/'
+        root = './' + cat + '/'
         imgPaths = getFiles(root)
         target = cv2.imdecode(np.fromfile(imgPaths[-1],dtype=np.uint8),0)
         match_scores = []
         for imgName in imgPaths[:-1]:
             img = cv2.imdecode(np.fromfile(imgName,dtype=np.uint8),0)
+            angle = conter(img)
             match_rate = ORBMatch(target,img)
             # match_rate = compare_img_hist(target,img)
             # match_rate = compare_img_p_hash(target,img)
